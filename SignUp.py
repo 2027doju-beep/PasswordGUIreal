@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkmacosx import Button
 import pathlib, os
-from tkcalendar2 import tkcalendar
+#from tkcalendar2 import tkcalendar
 
 def setupWindow():
     """
@@ -118,8 +118,8 @@ def displaySignUp(signFrame):
     # Birthdate label and date entry
     bDayLabel = tk.Label(master=signFrame, text="Birthdate ", fg="#000000", bg="#FAFAFA", height=3)
     bDayLabel.grid(row=12, column=0, columnspan=3, padx=10, sticky="w")
-    cal = tkcalendar.Calendar(master=signFrame)
-    cal.grid(row=13, column=0, columnspan=2, padx=30, sticky="w")
+#    cal = tkcalendar.Calendar(master=signFrame)
+#    cal.grid(row=13, column=0, columnspan=2, padx=30, sticky="w")
 
     dateLabel = tk.Label(master=signFrame, text="Select a date", fg="#2699FB", bg="#FAFAFA", height=3)
     dateLabel.grid(row=13, column=2, padx=10, sticky="w")
@@ -131,4 +131,7 @@ def displaySignUp(signFrame):
 
     # display frame
     signFrame.grid(row=1, column=0, columnspan=3, rowspan=15, sticky="nsew")
+
+
+
 
