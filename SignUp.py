@@ -26,10 +26,11 @@ def setupWindow():
     headFrame = tk.Frame(master=window, bg="#2699FB")
     headFrame.columnconfigure([0,1,2], weight=1, minsize=100)
 
-    # create frame for sign-up screen
-    mainFrame = tk.Frame(bg="#FAFAFA")
+    # create frame for sign-up screen and the login screen
+    SignupFrame = tk.Frame(bg="#FAFAFA")
+    LoginFrame = tk.Frame(bg="#FAFAFA")
 
-    return window, headFrame, mainFrame
+    return window, headFrame, LoginFrame, SignupFrame
 
 def displayHeader(headFrame):
     """
@@ -131,7 +132,5 @@ def displaySignUp(signFrame):
 
     # display frame
     signFrame.grid(row=1, column=0, columnspan=3, rowspan=15, sticky="nsew")
-
-
 
 
