@@ -11,7 +11,7 @@ def signUpPage(event): #navigate from login to signup page
     LoginView.hideLogin(loginFrame)
     SignUp.displaySignup(signUpFrame, headFrame)
 
-def validatePW(*args):
+def validatePW(args):
     # args 0,1, and 2 are from the event
     # then password is 3, confirmPassword is number 4
     # then labels list is number 5[match, length, char]
