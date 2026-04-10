@@ -73,8 +73,8 @@ def displayLoginView(LoginFrame, headFrame):
     LoginFrame.grid(row=1, column=0, columnspan=3, rowspan=15, sticky="nsew")
 
 
-def hideLogin(headFrame):
-    headFrame.grid_forget()
+def hideLogin(headFrame, LoginFrame):
+    LoginFrame.grid_forget()
 
     for widget in headFrame.winfo_children():
         widget.destroy()

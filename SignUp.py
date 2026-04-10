@@ -52,7 +52,7 @@ def displayHeader(headFrame):
     # display frame
     headFrame.grid(row=0, column=0, sticky="ew", columnspan=3)
 
-def setupSignUp(signFrame, validatePW):
+def setupSignUp(signFrame, validatePW, createAccountAttempt):
     """
     Adds all elements for the main frame of signup screen and displays the frame
     """
@@ -133,7 +133,17 @@ def setupSignUp(signFrame, validatePW):
     dateLabel.grid(row=13, column=2, padx=10, sticky="w")
 
     # Submit button
-    submit = Button(master=signFrame, width=31, bg="#2699FB", text="Submit",borderless=1, fg="#FFFFFF")
+    # Update the Submit button to pass all fields:
+    submit = Button(
+        master=signFrame, width=31, bg="#2699FB", text="Submit",
+        borderless=1, fg="#FFFFFF",
+        command=lambda: createAccountAttempt(
+            nameText.get(),
+            emailText.get(),
+            pwText.get(),
+            pwConText.get()
+        )
+    )
     submit.grid(row=14, pady=20, column=0, columnspan=3, sticky="nsew")
 
     return signFrame
