@@ -1,6 +1,7 @@
 from operator import truediv
 import SignUp
 import LoginView
+import Model
 
 window, headFrame, loginFrame, signUpFrame = SignUp.setupWindow()
 
@@ -29,7 +30,7 @@ def validatePW(*args):
     else:
         SignUp.colorInvalidLabel(labels[2])
 
-    # ✅Check if passwords match
+    #Check if passwords match
     if password == confirmPassword and password != "Passwords match":
         SignUp.colorValidLabel(labels[0])
         match = True
@@ -37,16 +38,19 @@ def validatePW(*args):
         SignUp.colorInvalidLabel(labels[0])
         match = False
 
-    # ✅Return True only if all three conditions are met
+    #Return True only if all three conditions are met
     valid = length and foundchar and match
     return valid
 
 
 def loginAttempt(email, password, errorLabel):
     print("called with:" + email + " and " + password)
+    if Model.loginAttempt(email, password) == True:
+        print("successfully logged in -> next page")
+    else:
+        print("Error logging in")
 
-
-# ✅createAccountAttempt function
+#createAccountAttempt function
 def createAccountAttempt(name, email, password, confirmPassword):
     print(f"Attempting to create account for: {name}, {email}")
 
