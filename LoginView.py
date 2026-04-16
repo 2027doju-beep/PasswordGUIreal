@@ -1,4 +1,3 @@
-
 import tkinter as tk
 from tkmacosx import Button
 import pathlib, os
@@ -36,7 +35,8 @@ def setUpLogin(LoginFrame, SignUpPage, loginAttempt):
     passwordText = tk.StringVar()
     passwordText.set("**********")
     passwordBox = tk.Entry(master=LoginFrame, width=30, font=('calibre', 18, 'normal'),
-                        textvariable=passwordText, bg="#FFFFFF", fg="#2699FB",
+                           textvariable=passwordText, show="*",  # ← ADD
+                           bg="#FFFFFF", fg="#2699FB",
                         highlightthickness=1, relief="flat", highlightcolor="#2699FB",
                         highlightbackground="#2699FB")
     passwordBox.grid(row=4, column=0, columnspan=3, padx=30, sticky="w")
@@ -78,3 +78,12 @@ def hideLogin(headFrame, LoginFrame):
 
     for widget in headFrame.winfo_children():
         widget.destroy()
+
+def colorValidLabel(label):
+    label.config(fg="#00BC16")
+
+def colorInvalidLabel(label):
+    label.config(fg="#F20847")
+
+def updateLabelText(label, text):
+    label.config(text=text)

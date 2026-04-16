@@ -1,5 +1,5 @@
 import sqlite3
-
+import hashlib
 
 def createUserTable():
 
@@ -22,7 +22,15 @@ def createRoleTable():
     con = sqlite3.connect("user.db") #create or access database file
     cur = con.cursor() #WE need this to do anything in our database
 
-    cur.execute("CREATE TABLE roles(email, role, viewuser, updateuser, deleteuser)")  # create a new table
+    cur.execute("""
+    CREATE TABLE IF NOT EXISTS roles(
+        email TEXT,
+        role TEXT,
+        viewuser BOOLEAN,
+        updateuser BOOLEAN,
+        deleteuser BOOLEAN
+    )
+    """)
 
     con.commit()  # save changes
     con.close()  # end connection
@@ -31,6 +39,9 @@ def createRoleTable():
 #login function -> check for matchign username + password combo
 
 def loginAttempt(email, password):
+    con = sqlite3.connect("user.db")
+    cur = con.cursor()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
     """
     Login a user or return false
     :param email: email address
@@ -44,7 +55,7 @@ def loginAttempt(email, password):
     #find the user with this email address
     results = cur.execute("SELECT email, password FROM users")  # create a new table
     for curRow in results.fetchall():
-        if email in curRow[0]:  #if we do --> check if the password matches to the email.
+        if email == curRow[0]:  #if we do --> check if the password matches to the email.
             if password == curRow[1]: #yes --> successful login! Return true
                 print("Login successful")
                 con.close() #end connection
@@ -52,10 +63,12 @@ def loginAttempt(email, password):
             #yes --> return True
             print(curRow[1])
             con.close()
-            return True
+            return False
 
-    con.close() #end connection
-    return True
+    con.close()
+    return False
+
+    return password == result[0]
     #if we dont --> return False
 loginAttempt("2027doju@seisen.com", "juliepassword")
 
@@ -72,12 +85,9 @@ def lookupUser(email):
            con.close()  # end connection
            return True
 
-
    con.close()  # end connection
    return False
 
-
-print(lookupUser("2027doju@seisen.com"))
 
 def createUser(name, email, password, birthdate = None):
    if lookupUser(email) == False:
@@ -98,8 +108,3 @@ def createUser(name, email, password, birthdate = None):
 
     #only creates user when they didnt exist)
 
-#createUserTable()
-#createUser("Julie", "2027doju@seisen.com", "juliepassword", "0815")
-
-
-#createRoleTable()

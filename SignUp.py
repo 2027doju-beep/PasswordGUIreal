@@ -62,7 +62,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     nameLabel = tk.Label(master=signFrame, text="Full Name", fg="#000000", bg="#FAFAFA", height=3)
     nameLabel.grid(row=1, column=0, columnspan=3, padx=10, sticky="w")
     nameText = tk.StringVar()
-    nameText.set("Tara Matuszek")
+    nameText.set("Your name")
     nameBox = tk.Entry(master=signFrame, width=30, font=('calibre',18,'normal'),
                        textvariable=nameText, bg="#FFFFFF",  fg="#2699FB",
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
@@ -73,7 +73,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     emailLabel = tk.Label(master=signFrame, text="Email", fg="#000000", bg="#FAFAFA", height=3)
     emailLabel.grid(row=3, column=0, columnspan=3, padx=10, sticky="w")
     emailText = tk.StringVar()
-    emailText.set("tmatuszek@seisen.com")
+    emailText.set("Your email")
     emailBox = tk.Entry(master=signFrame, width=30, font=('calibre', 18, 'normal'),
                        textvariable=emailText, bg="#FFFFFF", fg="#2699FB",
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
@@ -86,9 +86,10 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     pwText = tk.StringVar()
     pwText.set("********")
     pwBox = tk.Entry(master=signFrame, width=30, font=('calibre', 18, 'normal'),
-                        textvariable=pwText, bg="#FFFFFF", fg="#2699FB",
-                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
-                        highlightbackground="#2699FB")
+                     textvariable=pwText, show="*",  # ← ADD THIS
+                     bg="#FFFFFF", fg="#2699FB",
+                     highlightthickness=1, relief="flat",
+                     highlightcolor="#2699FB", highlightbackground="#2699FB")
     pwBox.grid(row=6, column=0, columnspan=3, padx=30, sticky="w")
 
     # confirm password label and textbox
@@ -97,7 +98,8 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     pwConText = tk.StringVar()
     pwConText.set("********")
     pwConBox = tk.Entry(master=signFrame, width=30, font=('calibre', 18, 'normal'),
-                     textvariable=pwConText, bg="#FFFFFF", fg="#2699FB",
+                        textvariable=pwConText, show="*",  # ← ADD
+                        bg="#FFFFFF", fg="#2699FB",
                      highlightthickness=1, relief="flat",highlightcolor="#2699FB",
                      highlightbackground="#2699FB")
     pwConBox.grid(row=8, column=0, columnspan=3, padx=30, sticky="w")
@@ -172,4 +174,3 @@ def colorValidLabel(vLabel):
 
 def colorInvalidLabel(vLabel):
     vLabel.config(fg="#F20847")
-    print("colorInvalidLabel")

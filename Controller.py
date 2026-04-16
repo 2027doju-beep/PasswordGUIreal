@@ -2,6 +2,8 @@ from operator import truediv
 import SignUp
 import LoginView
 import Model
+Model.createUserTable()
+Model.createRoleTable()
 
 window, headFrame, loginFrame, signUpFrame = SignUp.setupWindow()
 
@@ -44,11 +46,12 @@ def validatePW(*args):
 
 
 def loginAttempt(email, password, errorLabel):
-    print("called with:" + email + " and " + password)
     if Model.loginAttempt(email, password) == True:
-        print("successfully logged in -> next page")
+        LoginView.colorValidLabel(errorLabel)
+        LoginView.updateLabelText(errorLabel, "Success!")
     else:
-        print("Error logging in")
+        LoginView.colorInvalidLabel(errorLabel)
+        LoginView.updateLabelText(errorLabel, "Incorect email or password!")
 
 #createAccountAttempt function
 def createAccountAttempt(name, email, password, confirmPassword):
@@ -70,6 +73,12 @@ def createAccountAttempt(name, email, password, confirmPassword):
         return False
 
     print("Account created successfully!")
+    Model.createUser(name, email, password)
+
+    #go back to login page
+    SignUp.hideSignUp(headFrame)
+    LoginView.displayLoginView(loginFrame, headFrame)
+    # I added this line to save the user.
     return True
 
 
