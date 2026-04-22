@@ -1,6 +1,11 @@
 import tkinter as tk
 from tkmacosx import Button
 import pathlib, os
+
+def clearEntry(*args):
+    entryBox = args[1]
+    entryBox.delete(0, "end")
+
 def displayHeader(headFrame):
     """
     Adds the back arrow and top label for the header frame + displays header
@@ -12,7 +17,7 @@ def displayHeader(headFrame):
     # display frame
     headFrame.grid(row=0, column=0, sticky="ew", columnspan=3)
 
-def setUpLogin(LoginFrame, SignUpPage, loginAttempt):
+def setUpLogin(LoginFrame, SignUpPage, loginAttempt, passwordResetEmail):
     """
     Adds all elements for the main frame of signup screen and displays the frame
     """
@@ -28,6 +33,7 @@ def setUpLogin(LoginFrame, SignUpPage, loginAttempt):
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
                        highlightbackground="#2699FB")
     emailBox.grid(row=2, column=0, columnspan=3, padx=30, sticky="w")
+    emailBox.bind("<FocusIn>", lambda *args: clearEntry(*args, emailBox))
 
     # password label and textbox
     passwordLabel = tk.Label(master=LoginFrame, text="Password", fg="#000000", bg="#FAFAFA", height=3)
@@ -40,16 +46,23 @@ def setUpLogin(LoginFrame, SignUpPage, loginAttempt):
                         highlightthickness=1, relief="flat", highlightcolor="#2699FB",
                         highlightbackground="#2699FB")
     passwordBox.grid(row=4, column=0, columnspan=3, padx=30, sticky="w")
+    passwordBox.bind("<FocusIn>", lambda *args: clearEntry(*args, passwordBox))
 
     # error message
-    errorLabel = SignInLabel = tk.Label(master=LoginFrame, text="Email or Password is not found",
-                                        cursor="hand2", fg="#FF0000", bg="#FAFAFA", height=3)
-    SignInLabel.grid(row=5, column=0, columnspan=3, padx=10, sticky="ew")
+    errorLabel = tk.Label(
+        master=LoginFrame,
+        text="",  # so that it starts with no text
+        fg="#FF0000",
+        bg="#FAFAFA",
+        height=3
+    )
+    errorLabel.grid(row=5, column=0, columnspan=3, padx=10, sticky="ew")
 
     # forgot password label
     ForgotpwLabel = tk.Label(master=LoginFrame, text="Forgot Password?", font=("Arial", 10, "underline"),
                              cursor="hand2", fg="#2699FB", bg="#FAFAFA", height=1)
     ForgotpwLabel.grid(row=6, column=1, columnspan=3, padx=10, sticky="w")
+    ForgotpwLabel.bind("<Button-1>", lambda *args: passwordResetEmail(*args, emailText.get(), errorLabel))
 
     # Submit button
     submit = Button(master=LoginFrame, width=31, bg="#2699FB", text="Submit",borderless=1, fg="#FFFFFF",

@@ -3,6 +3,10 @@ from tkmacosx import Button
 import pathlib, os
 #from tkcalendar2 import tkcalendar
 
+def clearEntry(*args):
+    entryBox = args[1]
+    entryBox.delete(0, "end")
+
 def setupWindow():
     """
     Create and setup the window, including frames for header and main page
@@ -68,6 +72,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
                        highlightbackground="#2699FB")
     nameBox.grid(row=2, column=0, columnspan=3, padx=30, sticky="w")
+    nameBox.bind("<FocusIn>", lambda *args: clearEntry(*args, nameBox))
 
     # email label and textbox
     emailLabel = tk.Label(master=signFrame, text="Email", fg="#000000", bg="#FAFAFA", height=3)
@@ -79,6 +84,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
                        highlightbackground="#2699FB")
     emailBox.grid(row=4, column=0, columnspan=3, padx=30, sticky="w")
+    emailBox.bind("<FocusIn>", lambda *args: clearEntry(*args, emailBox))
 
     # password label and textbox
     pwLabel = tk.Label(master=signFrame, text="Password", fg="#000000", bg="#FAFAFA", height=3)
@@ -91,6 +97,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
                      highlightthickness=1, relief="flat",
                      highlightcolor="#2699FB", highlightbackground="#2699FB")
     pwBox.grid(row=6, column=0, columnspan=3, padx=30, sticky="w")
+    pwBox.bind("<FocusIn>", lambda *args: clearEntry(*args, pwBox))
 
     # confirm password label and textbox
     pwConLabel = tk.Label(master=signFrame, text="Confirm Password", fg="#000000", bg="#FAFAFA", height=3)
@@ -103,6 +110,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
                      highlightthickness=1, relief="flat",highlightcolor="#2699FB",
                      highlightbackground="#2699FB")
     pwConBox.grid(row=8, column=0, columnspan=3, padx=30, sticky="w")
+    pwConBox.bind("<FocusIn>", lambda *args: clearEntry(*args, pwConBox))
 
     # Password parameters (matching, length >= 8, contains special character)
 
@@ -134,19 +142,29 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     dateLabel = tk.Label(master=signFrame, text="Select a date", fg="#2699FB", bg="#FAFAFA", height=3)
     dateLabel.grid(row=13, column=2, padx=10, sticky="w")
 
+    errorLabel = tk.Label(
+        master=signFrame,
+        text="",  # so that it starts with no text
+        fg="#FF0000",
+        bg="#FAFAFA",
+        height=3
+    )
+    errorLabel.grid(row=14, column=0, columnspan=3, padx=10, sticky="ew")
+
     # Submit button
     # Update the Submit button to pass all fields:
     submit = Button(
         master=signFrame, width=31, bg="#2699FB", text="Submit",
         borderless=1, fg="#FFFFFF",
-        command=lambda: createAccountAttempt(
-            nameText.get(),
+        command=lambda: createAccountAttempt( #This gives the submit attempt all the information needed so that there is no repetition
+            nameText.get(), #about this bullet point-like format, pycharm recommended it for me
             emailText.get(),
             pwText.get(),
-            pwConText.get()
+            pwConText.get(),
+            errorLabel
         )
     )
-    submit.grid(row=14, pady=20, column=0, columnspan=3, sticky="nsew")
+    submit.grid(row=15, pady=20, column=0, columnspan=3, sticky="nsew")
 
     return signFrame
 
