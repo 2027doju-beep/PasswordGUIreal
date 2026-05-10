@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkmacosx import Button
 import pathlib, os
-#from tkcalendar2 import tkcalendar
+from tkcalendar import Calendar
 
 def clearEntry(*args):
     entryBox = args[1]
@@ -36,24 +36,20 @@ def setupWindow():
 
     return window, headFrame, LoginFrame, SignupFrame
 
-def displayHeader(headFrame):
-    """
-    Adds the back arrow and top label for the header frame + displays header
-    """
-    # find full image path
+def displayHeader(headFrame, backCommand=None):
     img_file_name = "arrow.png"
-    current_dir = pathlib.Path(__file__).parent.resolve()  # current directory
+    current_dir = pathlib.Path(__file__).parent.resolve()
     img_path = os.path.join(current_dir, img_file_name)
-    # add elements
-    imgArw=tk.PhotoImage(file=img_path)
-    imgArwLabel = tk.Label(master=headFrame, image=imgArw, bg="#2699FB")
+    imgArw = tk.PhotoImage(file=img_path)
+    imgArwLabel = tk.Label(master=headFrame, image=imgArw, bg="#2699FB", cursor="hand2")
     imgArwLabel.image = imgArw
+    if backCommand:
+        imgArwLabel.bind("<Button-1>", lambda event: backCommand())  # ← wrap in lambda, ignore event
     imgArwLabel.grid(row=0, column=0, sticky="w")
 
     headLabel = tk.Label(master=headFrame, text="Sign Up", bg="#2699FB", height=3)
     headLabel.grid(row=0, column=1, padx=10, sticky="nsew")
 
-    # display frame
     headFrame.grid(row=0, column=0, sticky="ew", columnspan=3)
 
 def setupSignUp(signFrame, validatePW, createAccountAttempt):
@@ -135,12 +131,12 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
 
     # Birthdate label and date entry
     bDayLabel = tk.Label(master=signFrame, text="Birthdate ", fg="#000000", bg="#FAFAFA", height=3)
-    bDayLabel.grid(row=12, column=0, columnspan=3, padx=10, sticky="w")
-#    cal = tkcalendar.Calendar(master=signFrame)
-#    cal.grid(row=13, column=0, columnspan=2, padx=30, sticky="w")
+    bDayLabel.grid(row=13, column=0, columnspan=3, padx=10, sticky="w")
+    cal = Calendar(master=signFrame)
+    cal.grid(row=14, column=0, columnspan=2, padx=30, sticky="w")
 
     dateLabel = tk.Label(master=signFrame, text="Select a date", fg="#2699FB", bg="#FAFAFA", height=3)
-    dateLabel.grid(row=13, column=2, padx=10, sticky="w")
+    dateLabel.grid(row=14, column=2, padx=10, sticky="w")
 
     errorLabel = tk.Label(
         master=signFrame,
@@ -149,7 +145,7 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
         bg="#FAFAFA",
         height=3
     )
-    errorLabel.grid(row=14, column=0, columnspan=3, padx=10, sticky="ew")
+    errorLabel.grid(row=12, column=0, columnspan=3, padx=10, sticky="ew")
 
     # Submit button
     # Update the Submit button to pass all fields:
@@ -161,7 +157,8 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
             emailText.get(),
             pwText.get(),
             pwConText.get(),
-            errorLabel
+            errorLabel,
+            cal.get_date()
         )
     )
     submit.grid(row=15, pady=20, column=0, columnspan=3, sticky="nsew")
@@ -169,21 +166,15 @@ def setupSignUp(signFrame, validatePW, createAccountAttempt):
     return signFrame
 
 
-def displaySignup(signFrame, headFrame):
-    """
-    
-    displays the sign uo page
-    :param signFrane: 
-    """
+def displaySignup(signFrame, headFrame, backCommand=None):   # accept backCommand
+   displayHeader(headFrame, backCommand)                     # pass it to displayHeader
+   signFrame.grid(row=1, column=0, columnspan=3, rowspan=15, sticky="nsew")
 
-    displayHeader(headFrame)
 
-    #display frame
-    signFrame.grid(row=1, column=0, columnspan=3, rowspan=15, sticky="nsew")
-
-def hideSignUp(headFrame):
+def hideSignUp(headFrame, signFrame=None):
     headFrame.grid_forget()
-
+    if signFrame:
+        signFrame.grid_forget()
     for widget in headFrame.winfo_children():
         widget.destroy()
 

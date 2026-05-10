@@ -9,7 +9,6 @@ from email.message import EmailMessage
 
 window, headFrame, loginFrame, signUpFrame = SignUp.setupWindow()
 
-
 def passwordResetEmail(*args):
     print(args)
     # get args for email and label
@@ -41,8 +40,14 @@ def passwordResetEmail(*args):
         LoginView.updateLabelText(errorLabel,"Email could not be sent, did you create an account?")
 
 def signUpPage(event):
-    LoginView.hideLogin(headFrame, loginFrame)
-    SignUp.displaySignup(signUpFrame, headFrame)
+   LoginView.hideLogin(headFrame, loginFrame)
+   SignUp.displaySignup(signUpFrame, headFrame, backCommand=goBackToLogin)  # pass back button handler
+
+def goBackToLogin(event=None):
+    SignUp.hideSignUp(headFrame, signUpFrame)
+    for widget in headFrame.winfo_children():
+        widget.destroy()
+    LoginView.displayLoginView(loginFrame, headFrame)
 
 def validatePW(*args):
     password = args[3].get()
@@ -86,6 +91,13 @@ def loginAttempt(email, password, errorLabel):
         LoginView.colorInvalidLabel(errorLabel)
         LoginView.updateLabelText(errorLabel, "Incorect email or password!")
 
+    #if not --> is this password ok?
+
+    #are they 13 or over? --> else error (ask an adult, etc.)
+
+    #if all ok --> add the account and add in the birthday
+
+
 #createAccountAttempt function
 def createAccountAttempt(name, email, password, confirmPassword, errorlabel, birthdate=None):
     print("Attempting to create account for: {name}, {email}")
@@ -96,34 +108,38 @@ def createAccountAttempt(name, email, password, confirmPassword, errorlabel, bir
     foundchar = any(c in password for c in specialcharacters)
 
     if len(password) < 8:
-        print("Account creation failed: password too short")
+        errorlabel.config(text="Password must be at least 8 characters long.", fg="#FF0000")
         return False
     if not foundchar:
-        print("Account creation failed: no special character")
+        errorlabel.config(text="Password must include a special character.", fg="#FF0000")
         return False
     if password != confirmPassword:
-        print("Account creation failed: passwords don't match")
+        errorlabel.config(text="Passwords do not match.", fg="#FF0000")
+        return False
+
+    # CHECK IF USER IS 13 OR OLDER
+    if birthdate is None or not Model.isOldEnough(birthdate):
+        errorlabel.config(text="You must be at least 13 years old to create an account.", fg="#FF0000")
+        return False
+
+    if birthdate is None or not Model.isOldEnough(birthdate):
+        print("Age check failed, birthdate was:", birthdate)  # temporary debug line
+        errorlabel.config(text="You must be at least 13 years old to create an account.", fg="#FF0000")
         return False
 
     #CHECK IF EMAIL ALREADY EXISTS
     existingUser = Model.lookupUser(email)
     if existingUser:
-        print("Account creation failed: email already exists")
-        errorlabel.config(text="Email already exists!")
+        errorlabel.config(text="An account with this email already exists.", fg="#FF0000")
         return False
 
     #CREATE USER
-    Model.createUser(name, email, password)
+    Model.createUser(name, email, password, birthdate)
     print("Account created successfully!")
 
-    SignUp.hideSignUp(headFrame)
+    SignUp.hideSignUp(headFrame, signUpFrame)  # pass signUpFrame, called only once
     LoginView.displayLoginView(loginFrame, headFrame)
 
-
-    #go back to login page
-    SignUp.hideSignUp(headFrame)
-    LoginView.displayLoginView(loginFrame, headFrame)
-    # I added this line to save the user.
     return True
 
 
@@ -133,3 +149,4 @@ loginFrame = LoginView.setUpLogin(loginFrame, signUpPage, loginAttempt, password
 LoginView.displayLoginView(loginFrame, headFrame)
 
 window.mainloop()
+

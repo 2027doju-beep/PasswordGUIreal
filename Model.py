@@ -2,17 +2,9 @@ import sqlite3
 import hashlib
 
 def createUserTable():
-
-
-   con = sqlite3.connect("user.db")  # create/access database file
-
-
-   cur = con.cursor()  # we need this to do anything in our database
-
-
-   cur.execute("DROP TABLE users") # create a new table
-   cur.execute("CREATE TABLE users(name, email, password, birthdate)") # create a new table
-
+   con = sqlite3.connect("user.db")
+   cur = con.cursor()
+   cur.execute("CREATE TABLE IF NOT EXISTS users(name, email, password, birthdate)")
 
    con.commit() # save changes
 
@@ -35,49 +27,37 @@ def createRoleTable():
     con.commit()  # save changes
     con.close()  # end connection
 
-
 #login function -> check for matchign username + password combo
 
 def loginAttempt(email, password):
-    con = sqlite3.connect("user.db")
-    cur = con.cursor()
-    hashed_password = hashlib.sha256(password.encode()).hexdigest()
     """
     Login a user or return false
     :param email: email address
     :param password: password
-    :return: True if found false otherwise
+    :return: True if found, false otherwise
     """
-    con = sqlite3.connect("user.db")  # create/access database file
+    con = sqlite3.connect("user.db")  # only open once
+    cur = con.cursor()
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
 
-    cur = con.cursor()  # we need this to do anything in our database
-
-    #find the user with this email address
-    results = cur.execute("SELECT email, password FROM users")  # create a new table
+    results = cur.execute("SELECT email, password FROM users")
     for curRow in results.fetchall():
-        if email == curRow[0]:  #if we do --> check if the password matches to the email.
-            if password == curRow[1]: #yes --> successful login! Return true
+        if email == curRow[0]:
+            if hashed_password == curRow[1]:
                 print("Login successful")
-                con.close() #end connection
+                con.close()
                 return True
-            #yes --> return True
-            print(curRow[1])
             con.close()
             return False
 
     con.close()
     return False
-
-    return password == result[0]
-    #if we dont --> return False
-loginAttempt("2027doju@seisen.com", "juliepassword")
+    # return password == result[0]
 
 def lookupUser(email):
    con = sqlite3.connect("user.db")  # create/access database file
 
-
    cur = con.cursor()  # we need this to do anything in our database
-
 
    results = cur.execute("SELECT email FROM users")  # create a new table
    for CurRow in results.fetchall():
@@ -88,6 +68,62 @@ def lookupUser(email):
    con.close()  # end connection
    return False
 
+def updateRole(email, role):
+    VALID_ROLES = ["admin", "user", "employee"]
+
+    if role not in VALID_ROLES:
+        print(f"Invalid role '{role}'. Must be one of: {VALID_ROLES}")
+        return False
+
+    con = sqlite3.connect("user.db")
+    cur = con.cursor()
+
+    cur.execute("SELECT email FROM roles WHERE email = ?", (email,))
+    result = cur.fetchone()
+
+    if result is None:
+        print(f"No user found with email '{email}'. No change made.")
+        con.close()
+        return False
+
+    cur.execute("UPDATE roles SET role = ? WHERE email = ?", (role, email))
+    con.commit()
+    print(f"Role updated to '{role}' for {email}.")
+    con.close()
+    return True
+
+
+def lookupRole(email, password):
+    conn = sqlite3.connect("user.db")
+    cur = conn.cursor()
+
+    sql = """
+    SELECT users.email, roles.role
+    FROM users
+    JOIN roles
+    ON users.email = roles.email
+    WHERE users.email=? AND users.password=?
+    """
+
+    hashed_password = hashlib.sha256(password.encode()).hexdigest()
+    cur.execute(sql, (email, hashed_password))
+    result = cur.fetchone()
+    print(result)
+
+    conn.close()
+
+    if result:
+        return result[1]
+    else:
+        return None
+
+from datetime import datetime
+
+def isOldEnough(birthdate):
+    birth = datetime.strptime(birthdate, "%m/%d/%y")  # ← lowercase %y instead of %Y
+    today = datetime.today()
+    age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+    return age >= 13
 
 def createUser(name, email, password, birthdate = None):
    if lookupUser(email) == False:
@@ -96,10 +132,9 @@ def createUser(name, email, password, birthdate = None):
 
        cur = con.cursor()  # we need this to do anything in our database
 
-
-       cur.execute("INSERT INTO users VALUES(?,?,?,?)", (name, email, password, birthdate)) # create a new table
+       hashed_password = hashlib.sha256(password.encode()).hexdigest() #This converts the plain text password into a hash, then passing hashed_password into the INSERT instead of password.
+       cur.execute("INSERT INTO users VALUES(?,?,?,?)", (name, email, hashed_password, birthdate))
        cur.execute("INSERT INTO roles VALUES(?,?,?,?,?)", (email, "user", False, False, False))
-
        con.commit()  # save changes
        con.close()  # end connection
    else:
@@ -107,4 +142,3 @@ def createUser(name, email, password, birthdate = None):
 
 
     #only creates user when they didnt exist)
-

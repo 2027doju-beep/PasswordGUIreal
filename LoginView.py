@@ -6,16 +6,21 @@ def clearEntry(*args):
     entryBox = args[1]
     entryBox.delete(0, "end")
 
-def displayHeader(headFrame):
-    """
-    Adds the back arrow and top label for the header frame + displays header
-    """
+def displayHeader(headFrame, backCommand=None):
+   img_file_name = "arrow.png"
+   current_dir = pathlib.Path(__file__).parent.resolve()
+   img_path = os.path.join(current_dir, img_file_name)
+   imgArw = tk.PhotoImage(file=img_path)
+   imgArwLabel = tk.Label(master=headFrame, image=imgArw, bg="#2699FB", cursor="hand2")
+   imgArwLabel.image = imgArw
+   if backCommand:                                      # bind the arrow if a command is given
+       imgArwLabel.bind("<Button-1>", backCommand)
+   imgArwLabel.grid(row=0, column=0, sticky="w")
 
-    headLabel = tk.Label(master=headFrame, text="Login", bg="#2699FB", height=3)
-    headLabel.grid(row=0, column=1, padx=10, sticky="nsew")
+   headLabel = tk.Label(master=headFrame, text="Login", bg="#2699FB", height=3)
+   headLabel.grid(row=0, column=1, padx=10, sticky="nsew")
 
-    # display frame
-    headFrame.grid(row=0, column=0, sticky="ew", columnspan=3)
+   headFrame.grid(row=0, column=0, sticky="ew", columnspan=3)
 
 def setUpLogin(LoginFrame, SignUpPage, loginAttempt, passwordResetEmail):
     """
@@ -27,7 +32,7 @@ def setUpLogin(LoginFrame, SignUpPage, loginAttempt, passwordResetEmail):
     emailLabel = tk.Label(master=LoginFrame, text="Email", fg="#000000", bg="#FAFAFA", height=3)
     emailLabel.grid(row=1, column=0, columnspan=3, padx=10, sticky="w")
     emailText = tk.StringVar()
-    emailText.set("2027doju@seisen.com")
+    emailText.set("Please enter your email")
     emailBox = tk.Entry(master=LoginFrame, width=30, font=('calibre',18,'normal'),
                        textvariable=emailText, bg="#FFFFFF",  fg="#2699FB",
                        highlightthickness=1, relief="flat",highlightcolor="#2699FB",
@@ -39,7 +44,7 @@ def setUpLogin(LoginFrame, SignUpPage, loginAttempt, passwordResetEmail):
     passwordLabel = tk.Label(master=LoginFrame, text="Password", fg="#000000", bg="#FAFAFA", height=3)
     passwordLabel.grid(row=3, column=0, columnspan=3, padx=10, sticky="w")
     passwordText = tk.StringVar()
-    passwordText.set("**********")
+    passwordText.set("********")
     passwordBox = tk.Entry(master=LoginFrame, width=30, font=('calibre', 18, 'normal'),
                            textvariable=passwordText, show="*",  # ← ADD
                            bg="#FFFFFF", fg="#2699FB",
